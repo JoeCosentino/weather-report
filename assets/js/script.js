@@ -11,14 +11,13 @@
 // THEN I am again presented with current and future conditions for that city
 var inputValue = document.querySelector("#cityname");
 var submitBtn = document.querySelector("#submit");
+var apiKey = "139bfa69532b5f8c4c783dac503cee31";
+
 
 var getCityWeather = function(city) {
-    var geoConverterUrl = "http://api.openweathermap.org/geo/1.0/direct?q=" + inputValue.value + "&limit=5&appid={API key}";
-    console.log(geoConverterUrl);
-    // var apiUrl = "https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid=139bfa69532b5f8c4c783dac503cee31";
-
+    var apiUrl = "https://api.openweathermap.org/data/2.5/weather?=" + city + "&appid=" + apiKey;
     // make a request to the url
-    fetch(geoConverterUrl)
+    fetch(apiUrl)
         .then(function(response) {
             // request was successful
             if (response.ok) {
@@ -33,5 +32,7 @@ var getCityWeather = function(city) {
             alert("Unable to connect to server");
         });
 };
+
+console.log(apiUrl);
 
 submitBtn.addEventListener("submit", getCityWeather);
