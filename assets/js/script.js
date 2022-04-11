@@ -12,6 +12,7 @@
 
 var submitBtn = document.querySelector("#submit");
 var apiKey = "139bfa69532b5f8c4c783dac503cee31";
+var currentForDispEl = document.querySelector("#city-display");
 
 
 var getCoords = function(event) {
@@ -40,7 +41,7 @@ var getCoords = function(event) {
 };
 
 var getCityWeather = function (lon, lat) {
-    var apiUrl2 = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&exclude={part}&appid=" + apiKey;
+    var apiUrl2 = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&units=metric&appid=" + apiKey;
     console.log(apiUrl2);
 
     // make a request again using what we got from previous fetch
@@ -49,16 +50,75 @@ var getCityWeather = function (lon, lat) {
             //request was successful
             if (response.ok) {
                 response.json().then(function(data) {
-                    displayWeather(data);
-                    console.log(data);
+                    displayWeather(data.current);
+                    weatherForecast(data.daily);
+                    // console.log(data);
                 })
             }
         })
 }
 
-var displayWeather = function (data) {
-    var currentDay = new Date(data.current.dt * 1000);
-    console.log(currentDay);
-}
+// var getIcons = function () {
+//     var apiIcon = "http://openweathermap.org/img/wn/10d@2x.png";
+//     console.log(apiIcon);
+
+//     fetch(apiIcon)
+//         .then(function(response) {
+//             if(response.ok) {
+//                 response.json().then(function(data) {
+//                     displayWeather(data);
+//                     console.log(data);
+//                 })
+//             }
+//         })
+// }
+
+var displayWeather = function (weather) {
+    var currentDay = new Date(weather.dt * 1000);
+    var currentTemp = weather.temp;
+    // var currentIcon = weather.weather[0].icon;
+    // console.log(currentIcon);
+    var currentHumidity = weather.humidity;
+    var currentWindSpeed = weather.wind_speed;
+    var currentUvi = weather.uvi;
+
+    var currentDayEl = document.createElement("div");
+    var options = {weekday: "long", year: "numeric", month: "long", day: "numeric"};
+    currentDayEl.textContent = currentDay.toLocaleDateString("en-us", options);
+    currentForDispEl.append(currentDayEl);
+
+    var currentTempEl = document.createElement("div");
+    currentTempEl.textContent = currentTemp;
+    currentForDispEl.append(currentTempEl);
+
+    // var currentIconEl = document.createElement("div");
+    // currentIconEl.textContent = currentIcon;
+    // currentForDispEl.append(currentIconEl);
+
+    var currentHumidityEl = document.createElement("div");
+    currentHumidityEl.textContent = currentHumidity;
+    currentForDispEl.append(currentHumidityEl); 
+
+    var currentWindSpeedEl = document.createElement("div");
+    currentWindSpeedEl.textContent = currentWindSpeed;
+    currentForDispEl.append(currentWindSpeedEl);
+
+    var currentUviEl = document.createElement("div");
+    currentUviEl.textContent = currentUvi;
+    currentForDispEl.append(currentUviEl);
+
+    var weatherIcon = document.createElement("img")
+    weatherIcon.setAttribute("id", "weather-icon")
+    var icon = weatherIcon.setAttribute("src", 'http://openweathermap.org/img/wn/' + weather.weather[0].icon + '@2x.png')
+    weatherIcon.textContent = icon;
+    currentForDispEl.append(weatherIcon);
+};
+
+// to get 5 day forecast
+var weatherForecast = function (tenDay) {
+    for (var i = 0; i < 5; i++) {
+        displayWeather(tenDay[i]);
+    }
+};
 
 submitBtn.addEventListener("click", getCoords);
